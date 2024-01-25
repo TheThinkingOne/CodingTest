@@ -23,8 +23,12 @@ public class boj11000 {
 
         // 시작 시간을 기준으로 정렬
         java.util.Arrays.sort(list, (a, b) -> Integer.compare(a[0], b[0]));
-        // 수업 끝나는 시간을 저장하는 우선순위 큐 room 선언
+        //Integer.compare: 두 정수를 비교해 정렬 순서를 결정하는 메서드
+        //a[0]: 수업 시작시간, b[0]: 수업이 끝나는 시간
+        //수업이 시작하는 시간이 빠른 순서대로 오름차순 정렬
+
         PriorityQueue<Integer> room = new PriorityQueue<>();
+        // 수업 끝나는 시간을 저장하는 우선순위 큐
 
         for (int i = 0; i < N; i++) {
             if (room.isEmpty() || room.peek() > list[i][0]) {

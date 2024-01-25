@@ -2,55 +2,48 @@ import sys
 sys.stdin = open('input.txt', 'r')
 
 N, M = map(int, input().split())
-MyMap = [list(map(int, input().split())) for _ in range(N)]
+SeperatedIceAreas = 0
+count = 0
+MyMap = []
+Stack = []  # Change from Queue to Stack for DFS
+yearCount = 0
 
 dy = [-1, 1, 0, 0]
 dx = [0, 0, -1, 1]
 
+Visited = [[False] * M for _ in range(N)]
+
+for _ in range(N):
+    MyMap.append(list(map(int, input().split())))
+
 def isSafe(y, x):
     return 0 <= y < N and 0 <= x < M
 
-def meltIce():
-    new_map = [row[:] for row in MyMap]  # 녹은 빙산을 새로운 맵으로 복사
-    for y in range(N):
-        for x in range(M):
-            if MyMap[y][x] > 0:
-                sea_count = sum(1 for ny, nx in zip([y-1, y+1, y, y], [x, x, x-1, x+1]) if isSafe(ny, nx) and MyMap[ny][nx] == 0)
-                new_map[y][x] = max(0, MyMap[y][x] - sea_count)
+def dfs(y, x):
+    Stack.append((y, x))
+    Visited[y][x] = True
 
-    return new_map
+    while Stack:
+        cy, cx = Stack.pop()
 
-def countIcebergs():
-    count = 0
-    visited = [[False] * M for _ in range(N)]
-    for y in range(N):
-        for x in range(M):
-            if MyMap[y][x] > 0 and not visited[y][x]:
-                count += 1
-                stack = [(y, x)]
-                visited[y][x] = True
+        for dir in range(4):
+            newY = cy + dy[dir]
+            newX = cx + dx[dir]
 
-                while stack:
-                    cy, cx = stack.pop()
-                    for dir in range(4):
-                        ny, nx = cy + dy[dir], cx + dx[dir]
-                        if isSafe(ny, nx) and MyMap[ny][nx] > 0 and not visited[ny][nx]:
-                            stack.append((ny, nx))
-                            visited[ny][nx] = True
+            if isSafe(newY, newX) and not Visited[newY][newX]:
+                if MyMap[newY][newX] == 0:
+                    if MyMap[y][x] > 0:
+                        MyMap[y][x] -= 1
+                else:
+                    dfs(newY, newX)
 
-    return count
+for y in range(N):
+    for x in range(M):
+        if MyMap[y][x] > 0 and not Visited[y][x]:
+            SeperatedIceAreas += 1
+            dfs(y, x)
 
-yearCount = 0
-while True:
-    icebergCount = countIcebergs()
+#print(SeperatedIceAreas)
+print(MyMap)
 
-    if icebergCount == 0:
-        print(0)
-        break
 
-    if icebergCount >= 2:
-        print(yearCount)
-        break
-
-    MyMap = meltIce()
-    yearCount += 1

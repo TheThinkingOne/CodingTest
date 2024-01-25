@@ -46,6 +46,7 @@ public class boj1966 {
         br.close(); // Close the BufferedReader
     }
 }
+//인덱스를 활용해서 하는방법
 
 
 
